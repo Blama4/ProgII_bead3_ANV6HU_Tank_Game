@@ -1,12 +1,13 @@
 
 #include "button_widget.h"
-Button_Widget::Button_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _textin, int _r, int _g, int _b):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Button_Widget::Button_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _textin, int _r, int _g, int _b, int _id):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
 {
     type = "Button";
         r = _r;
         g = _g;
         b = _b;
         textin = _textin;
+        id = _id;
 }
 void Button_Widget::textsetter(std::string newtext)
 {
@@ -15,6 +16,10 @@ void Button_Widget::textsetter(std::string newtext)
 std::string Button_Widget::get_value()
 {
     return "GOMB VAGYOK";
+}
+int Button_Widget::getid()
+{
+    return id;
 }
 
 
