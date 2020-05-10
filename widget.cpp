@@ -1,6 +1,11 @@
 
 #include "widget.h"
 
+int Widget::get_id()
+{
+    return id;
+}
+
 bool Widget::get_focusable()
 {
     return focusable;
@@ -24,13 +29,14 @@ void Widget::setfocused(bool sb)
     }
 }
 
-Widget::Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable)
+Widget::Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _id)
 {
-    beg_x = _beg_x;
+        beg_x = _beg_x;
         beg_y = _beg_y;
         end_x = _end_x;
         end_y = _end_y;
         focusable = _focusable;
+        id = _id;
         if(focusable)
         {
             focused = false;

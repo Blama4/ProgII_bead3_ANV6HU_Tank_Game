@@ -1,5 +1,5 @@
 #include "preview_widget.h"
-Preview_Widget::Preview_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _inputkep,int _r, int _g, int _b, bool _enemy):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Preview_Widget::Preview_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, std::string _inputkep,int _r, int _g, int _b, bool _enemy):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable,_id)
 {
     type = "Preview";
     r = _r;

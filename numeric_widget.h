@@ -22,10 +22,14 @@ protected:
     void draw();
     std::string get_value();
 
+
 public:
-    Num_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _value, int _max_value, int _min_value);
+    Num_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _id, int _value, int _max_value, int _min_value);
     void event_handler(genv::event &e);
     bool getfocused();
+    void setrangemax(int inx);
+    void setrangemin(int inx);
+    void setvaluecenter();
 };
 
 #endif // WIDGET_H_INCLUDED

@@ -46,7 +46,7 @@ bool Num_Widget::dec(int pos_x, int pos_y)
         else
             return false;
 }
-Num_Widget::Num_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _value, int _max_value, int _min_value):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Num_Widget::Num_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, int _value, int _max_value, int _min_value):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable,_id)
 {
     type = "Numeric";
         max_value = _max_value;
@@ -60,6 +60,25 @@ Num_Widget::Num_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _foc
             value = (_min_value+max_value)/2;
         }
 }
+
+void Num_Widget::setrangemax(int inx)
+{
+    max_value = inx;
+    if(value>max_value)
+        value = inx;
+}
+void Num_Widget::setrangemin(int inx)
+{
+    min_value = inx;
+    if(value<min_value)
+        value = inx;
+}
+void Num_Widget::setvaluecenter()
+{
+    value = (max_value-min_value)/2+min_value;
+}
+
+
 void Num_Widget::event_handler(genv::event &e)
 {
     if(e.type == genv::ev_mouse && e.button == genv::btn_left)

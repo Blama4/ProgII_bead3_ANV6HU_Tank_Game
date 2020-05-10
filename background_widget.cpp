@@ -1,6 +1,6 @@
 #include "background_widget.h"
 
-Background_Widget::Background_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _margin, int _r, int _g, int _b):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Background_Widget::Background_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, int _margin, int _r, int _g, int _b):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable, _id)
 {
     type = "Background";
         r = _r;

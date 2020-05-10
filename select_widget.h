@@ -29,7 +29,7 @@ protected:
     std::string get_value();
 
 public:
-    Select_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::vector<std::string>_menu, int _viewable);
+    Select_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, std::vector<std::string>_menu, int _viewable);
     void event_handler(genv::event &e);
     bool getfocused();
     bool getopened();

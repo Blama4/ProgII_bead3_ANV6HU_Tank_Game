@@ -1,6 +1,6 @@
 #include "select_widget.h"
 
-Select_Widget::Select_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::vector<std::string>_menu, int _viewable):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Select_Widget::Select_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, std::vector<std::string>_menu, int _viewable):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable,_id)
 {
     type = "Select";
     viewable = _viewable;

@@ -1,6 +1,6 @@
 
 #include "button_widget.h"
-Button_Widget::Button_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _textin, int _r, int _g, int _b, int _id):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+Button_Widget::Button_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _id, std::string _textin, int _r, int _g, int _b):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable, _id)
 {
     type = "Button";
         r = _r;
@@ -17,10 +17,6 @@ std::string Button_Widget::get_value()
 {
     return "GOMB VAGYOK";
 }
-int Button_Widget::getid()
-{
-    return id;
-}
 
 
 void Button_Widget::event_handler(genv::event &e)
@@ -33,6 +29,10 @@ void Button_Widget::event_handler(genv::event &e)
             {
                 setfocused(true);
             }
+        }
+    if(e.type == genv::ev_mouse && e.button == -genv::btn_left)
+        {
+            setfocused(false);
         }
         draw();
 }

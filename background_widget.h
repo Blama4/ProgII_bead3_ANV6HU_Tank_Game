@@ -16,7 +16,7 @@ protected:
     std::string get_value();
 
 public:
-    Background_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int margin, int _r, int _g, int _b);
+    Background_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id,int margin, int _r, int _g, int _b);
     void event_handler(genv::event &e);
 };
 

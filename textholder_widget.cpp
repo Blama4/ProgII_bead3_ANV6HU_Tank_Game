@@ -1,7 +1,7 @@
 
 
 #include "textholder_widget.h"
-TextHolder_Widget::TextHolder_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _textin, int _r, int _g, int _b, int _margin):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable)
+TextHolder_Widget::TextHolder_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable,int _id, std::string _textin, int _r, int _g, int _b, int _margin):Widget(_beg_x, _beg_y, _end_x, _end_y,_focusable, _id)
 {
     type = "TextHolder";
         r = _r;

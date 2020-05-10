@@ -17,7 +17,7 @@ protected:
     std::string get_value();
 
 public:
-    Preview_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, std::string _inputkep,int _r, int _g, int _b, bool enemy);
+    Preview_Widget(int _beg_x, int _beg_y, int _end_x, int _end_y, bool _focusable, int _id, std::string _inputkep,int _r, int _g, int _b, bool enemy);
     void event_handler(genv::event &e);
     void inputkepsetter(std::string newkep);
 };
