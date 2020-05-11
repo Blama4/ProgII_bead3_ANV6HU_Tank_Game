@@ -16,6 +16,7 @@
 #include "button_widget.h"
 #include "textholder_widget.h"
 #include "preview_widget.h"
+#include "active_widget.h"
 using namespace genv;
 using namespace std;
 
@@ -74,7 +75,6 @@ public:
                 }
             }
         }
-        end_x = beg_x+tmpx;
         end_y = 700;
         beg_y = end_y-tmpy;
         max_deg = _max_deg;
@@ -83,7 +83,7 @@ public:
         min_speed = _min_speed;
         beg_x = 0;
     }
-    int get_rand_beg_x()
+    int get_rand_beg_x(bool enemy)
     {
         int randbegx;
         if(!enemy)
@@ -108,6 +108,14 @@ public:
     {
         return beg_y;
     }
+    int get_end_x()
+    {
+        return end_x;
+    }
+    int get_end_y()
+    {
+        return end_y;
+    }
     int get_speed_max()
     {
         return max_speed;
@@ -127,23 +135,32 @@ public:
     void set_beg_x(int inbegx)
     {
         beg_x=inbegx;
+        end_x =inbegx+tmpx;
     }
 };
 
 class Game_Master
 {
     bool menu = true;
-    int player1;
-    int player2;
+    bool fire = false;
+    bool gameover = false;
+    int gravity = 10;
+    int bg_time = 0;
+    int time = 0;
+    int player1 = 0;
+    int player2 =0;
+    double fire_x =0;
+    double fire_y =0;
+    double angle = 0;
+    double Vo = 0;
+    int y_offset = 0;
+    int x_offset = 0;
+    int firecounter = rand()%20;
+    int player1point = 0;
+    int player2point = 0;
     vector<Widget*>Wid;
     vector<Widget*>GameWid;
     vector<Tank*>Tanks;
-
-    bool fire_tank(int x, int y, int deg, int spd, bool enemy)
-    {
-        const double pi = 3.1415;
-        return false;
-    }
 
 public:
     Game_Master()
@@ -192,11 +209,19 @@ public:
         GameWid.push_back(bu3);
         GameWid.push_back(bu4);
 
+        Active_Widget* ac1 = new Active_Widget(520,160,570,210,false,16,firecounter%2,0,255,0);
+        Active_Widget* ac2 = new Active_Widget(870,160,920,210,false,17,firecounter%2+1,0,255,0);
+        GameWid.push_back(ac1);
+        GameWid.push_back(ac2);
 
-        Tank* ta1 = new Tank(80,50,200,100,"tank1.kep",false);
+        TextHolder_Widget* te3 = new TextHolder_Widget(685,400,765,450,false,18,"0:0",255,255,255,3);
+        Wid.push_back(te3);
+
+
+        Tank* ta1 = new Tank(85,50,200,100,"tank1.kep",false);
         Tank* ta2 = new Tank(70,40,180,80,"tank2.kep",false);
         Tank* ta3 = new Tank(70,30,120,60,"tank3.kep",false);
-        Tank* ta4 = new Tank(80,50,200,100,"tank1.kep",true);
+        Tank* ta4 = new Tank(85,50,200,100,"tank1.kep",true);
         Tank* ta5 = new Tank(70,40,180,80,"tank2.kep",true);
         Tank* ta6 = new Tank(70,30,120,60,"tank3.kep",true);
         Tanks.push_back(ta1);
@@ -205,6 +230,43 @@ public:
         Tanks.push_back(ta4);
         Tanks.push_back(ta5);
         Tanks.push_back(ta6);
+    }
+    bool fire_logic(int angle, int Vo, int time, int x_offset, int y_offset, bool enemy, int tankbegx, int tankendx, int tankbegy, int tankendy)
+    {
+        double oldy;
+        double oldx;
+        double x,y;
+        int fire_x = time-bg_time;
+        double rad = angle*pi/180;
+        double tmp1 = fire_x * tan(rad);
+        double tmp2 = gravity/(2*pow(Vo,2)*pow(cos(rad),2));
+        double tmp3 = pow(fire_x,2);
+        fire_y=Y-(tmp1-tmp2*tmp3)-(Y-y_offset);
+        double degree = sin((fire_y-oldy)/(sqrt(pow(fire_x-oldx,2)+pow(fire_y-oldy,2))));
+        if(enemy)
+        {
+            x = X-(X-x_offset)-fire_x;
+        }
+        else
+        {
+            x = fire_x+x_offset;
+        }
+        if(fire_y<=700 && fire_y>=0 && x >=0 && x <=X)
+        {
+            gout<<move_to(x,fire_y)<<color(0,0,0)<<box(15,15);
+        }
+        oldy = fire_y;
+        oldx = fire_x;
+        if(x>=tankbegx && x<=tankendx && fire_y<=tankendy && fire_y>=tankbegy)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+
     }
     void check_event(event ev)
     {
@@ -232,18 +294,16 @@ public:
                                 ((Preview_Widget*)Wid[j])->inputkepsetter(Wid[i]->get_value()+".kep");
                                 if(i%2==0)
                                 {
-
                                     string tmp1;
                                     tmp1 = Wid[i]->get_value();
                                     tmp1 = tmp1[tmp1.size()-1];
                                     stringstream ss;
                                     ss<<tmp1;
                                     ss>>player1;
-                                    player1--;
+                                    player1=player1-1;
                                 }
                                 else
                                 {
-
                                     string tmp2;
                                     tmp2 = Wid[i]->get_value();
                                     tmp2 = tmp2[tmp2.size()-1];
@@ -257,7 +317,6 @@ public:
                     }
                     if(Wid[i]->get_type()=="Button" && ((Button_Widget*)Wid[i])->getfocused())
                     {
-
                         if(Wid[i]->get_id()==2)
                         {
                             menu = false;
@@ -266,7 +325,6 @@ public:
                         {
                             exit(0);
                         }
-
                     }
                 }
             }
@@ -275,18 +333,6 @@ public:
         {
             if (ev.type != ev_timer)
             {
-                for(size_t i =0; i<GameWid.size(); ++i)
-                {
-                    GameWid[i]->event_handler(ev);
-                    if(GameWid[i]->get_type()=="Button" && ((Button_Widget*)GameWid[i])->getfocused())
-                    {
-                        if(GameWid[i]->get_id()==15)
-                        {
-                            menu = true;
-                        }
-                    }
-
-                }
 
                 if(Tanks[player1]->get_beg_x()==0)  //KEZDÕHELYEK ÉS NUM_WIDGET RANGE BEÁLLÍTÁS
                 {
@@ -294,8 +340,8 @@ public:
                     {
                         player2 = 3;
                     }
-                    Tanks[player1]->set_beg_x( Tanks[player1]->get_rand_beg_x());
-                    Tanks[player2]->set_beg_x( Tanks[player2]->get_rand_beg_x());
+                    Tanks[player1]->set_beg_x(Tanks[player1]->get_rand_beg_x(false));
+                    Tanks[player2]->set_beg_x( Tanks[player2]->get_rand_beg_x(true));
                     for(size_t i =0; i<GameWid.size(); ++i)
                     {
                         if(GameWid[i]->get_type()=="Numeric")
@@ -325,17 +371,140 @@ public:
                         }
                     }
                 }
-                canvas c;
-                c = Tanks[player1]->GetTankCanvas();
-                gout<<stamp(c,Tanks[player1]->get_beg_x(),Tanks[player1]->get_beg_y());
-                canvas e;
-                e = Tanks[player2]->GetTankCanvas();
-                gout<<stamp(e,Tanks[player2]->get_beg_x(),Tanks[player2]->get_beg_y());
+                for(size_t i =0; i<GameWid.size(); ++i)
+                {
+                    if(GameWid[i]->get_type()=="Button" && ((Button_Widget*)GameWid[i])->getfocused())
+                    {
+                        if(GameWid[i]->get_id()==15)
+                        {
+                            menu = true;
+                        }
+                        if(GameWid[i]->get_id()==14)
+                        {
+                            if(time >= bg_time+1000)
+                            {
+                                fire = true;
+                                bg_time = time;
+                                for(size_t i =0; i<GameWid.size(); ++i)
+                                {
+                                    if(firecounter%2)
+                                    {
+                                        if(GameWid[i]->get_id()==10)
+                                            angle = ((Num_Widget*)GameWid[i])->getintvalue();
+                                        if(GameWid[i]->get_id()==11)
+                                            Vo = ((Num_Widget*)GameWid[i])->getintvalue();
+                                        x_offset = Tanks[player1]->get_end_x();
+                                        int tmpyof = (Tanks[player1]->get_end_y()-Tanks[player1]->get_beg_y())/2+Tanks[player1]->get_beg_y();
+                                        y_offset = tmpyof;
+                                        if(GameWid[i]->get_id()==16)
+                                        {
+                                            ((Active_Widget*)GameWid[i])->setactive(true);
+                                        }
+                                        if(GameWid[i]->get_id()==17)
+                                        {
+                                            ((Active_Widget*)GameWid[i])->setactive(false);
+                                        }
 
-                gout<<refresh;
+                                    }
+                                    else
+                                    {
+                                        if(GameWid[i]->get_id()==12)
+                                            angle = ((Num_Widget*)GameWid[i])->getintvalue();
+                                        if(GameWid[i]->get_id()==13)
+                                            Vo = ((Num_Widget*)GameWid[i])->getintvalue();
+                                        x_offset = Tanks[player2]->get_beg_x();
+                                        int tmpyof = (Tanks[player2]->get_end_y()-Tanks[player2]->get_beg_y())/2+Tanks[player2]->get_beg_y();
+                                        y_offset = tmpyof;
+                                    }
+                                }
+                                ++firecounter;
+                            }
+                        }
+                    }
+                }
+
+
+                //gout<<refresh;
             }
-        }
+            for(size_t i =0; i<GameWid.size(); ++i)
+            {
+                GameWid[i]->event_handler(ev);
 
+                if(GameWid[i]->get_id()==16 && time >= bg_time+1000)
+                {
+                    if(firecounter%2)
+                    {
+                        ((Active_Widget*)GameWid[i])->setactive(true);
+                        ((Active_Widget*)GameWid[i+1])->setactive(false);
+                    }
+                    else
+                    {
+                        ((Active_Widget*)GameWid[i])->setactive(false);
+                        ((Active_Widget*)GameWid[i+1])->setactive(true);
+                    }
+
+                }
+            }
+
+            canvas c;
+            c = Tanks[player1]->GetTankCanvas();
+            gout<<stamp(c,Tanks[player1]->get_beg_x(),Tanks[player1]->get_beg_y());
+            canvas e;
+            e = Tanks[player2]->GetTankCanvas();
+            gout<<stamp(e,Tanks[player2]->get_beg_x(),Tanks[player2]->get_beg_y());
+
+            if (ev.type == ev_timer && ev.type !=ev_key)
+            {
+                if(fire && time > 2000)
+                {
+                    if(firecounter%2)
+                    {
+                        bool tmp = fire_logic(angle,Vo,time,x_offset,y_offset,firecounter%2,Tanks[player1]->get_beg_x(),Tanks[player1]->get_end_x(), Tanks[player1]->get_beg_y(),Tanks[player1]->get_end_y());
+                        if(tmp)
+                        {
+                            gameover = true;
+                            player2point++;
+                        }
+                    }
+
+                    else
+                    {
+                        bool tmp = fire_logic(angle,Vo,time,x_offset,y_offset,firecounter%2,Tanks[player2]->get_beg_x(),Tanks[player2]->get_end_x(), Tanks[player2]->get_beg_y(),Tanks[player2]->get_end_y());
+                        if(tmp)
+                        {
+                            gameover = true;
+                            player1point++;
+                        }
+                    }
+
+                }
+                if(gameover)
+                {
+                    menu = true;
+                    time = 0;
+                    bg_time = 0;
+                    gameover = false;
+
+                    stringstream szs;
+                    stringstream srs;
+                    string tmp;
+                    string tmp2;
+                    szs<<player1point;
+                    szs>>tmp;
+
+                    srs<<player2point;
+                    srs>>tmp2;
+                    ((TextHolder_Widget*)Wid[Wid.size()-1])->textsetter(tmp+" : "+tmp2);
+
+                    Tanks[player1]->set_beg_x(0);
+                    firecounter++;
+
+                }
+
+                time=time+8;
+            }
+            gout<<refresh;
+        }
     }
 };
 
